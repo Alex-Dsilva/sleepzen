@@ -13,18 +13,18 @@ class AudioManager {
   private speechUtterance: any = null;
 
   constructor() {
-    this.configureAudioSession();
+    // Audio session will be configured safely once React components mount
   }
 
   public async configureAudioSession() {
     try {
-      if (Platform.OS !== 'web') {
+      if (Platform.OS !== 'web' && Audio && typeof Audio.setAudioModeAsync === 'function') {
         await Audio.setAudioModeAsync({
           playsInSilentModeIOS: true,
           staysActiveInBackground: true,
-          interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+          interruptionModeIOS: InterruptionModeIOS?.DoNotMix ?? 1,
           shouldDuckAndroid: true,
-          interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+          interruptionModeAndroid: InterruptionModeAndroid?.DoNotMix ?? 1,
           playThroughEarpieceAndroid: false,
         });
       }

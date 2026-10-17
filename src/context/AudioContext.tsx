@@ -60,6 +60,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const sessionStartTimeRef = useRef<number>(0);
   const lastSpokenPhaseRef = useRef<number>(-1);
 
+  // Safely configure audio session after components have mounted
+  useEffect(() => {
+    audioManager.configureAudioSession().catch((err) => {
+      console.warn('Audio session setup error:', err);
+    });
+  }, []);
+
   // Handle phase determination based on progress percentage
   useEffect(() => {
     if (!isPlaying || ambientOnlyMode) return;

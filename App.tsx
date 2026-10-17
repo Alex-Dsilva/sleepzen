@@ -12,6 +12,7 @@ import { SoundMixerScreen } from './src/screens/SoundMixerScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { Colors } from './src/theme/colors';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 const NavigationRoot: React.FC = () => {
   const { currentScreen } = useApp();
@@ -42,14 +43,16 @@ const NavigationRoot: React.FC = () => {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <AppProvider>
-        <AudioProvider>
-          <StatusBar style="light" />
-          <NavigationRoot />
-        </AudioProvider>
-      </AppProvider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <AppProvider>
+          <AudioProvider>
+            <StatusBar style="light" />
+            <NavigationRoot />
+          </AudioProvider>
+        </AppProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 
