@@ -7,6 +7,9 @@ on:
       - master
   workflow_dispatch:   # Allow manual trigger from GitHub Actions tab
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     name: Build Debug APK
@@ -35,15 +38,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 5. Set up Android SDK
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      # 6. Generate the native android/ directory with expo prebuild
+      # 5. Generate the native android/ directory with expo prebuild
       - name: Run Expo prebuild
         run: npx expo prebuild --platform android --no-install
 
-      # 7. Cache Gradle for faster subsequent builds
+      # 6. Cache Gradle for faster subsequent builds
       - name: Cache Gradle
         uses: actions/cache@v4
         with:
@@ -53,17 +52,17 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-
 
-      # 8. Make gradlew executable
+      # 7. Make gradlew executable
       - name: Grant execute permission for gradlew
         run: chmod +x android/gradlew
 
-      # 9. Build debug APK
+      # 8. Build debug APK
       - name: Build Debug APK
         run: |
           cd android
           ./gradlew assembleDebug --no-daemon --stacktrace
 
-      # 10. Upload APK as build artifact (always available for 30 days)
+      # 9. Upload APK as build artifact (always available for 30 days)
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -71,10 +70,10 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      # 11. Create a GitHub Release with the APK attached (on push to main/master)
+      # 10. Create a GitHub Release with the APK attached (on push to main/master)
       - name: Get date for release tag
         id: date
-        run: echo "TAG=v1.0-$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
+        run: echo "TAG=v1.0-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release and upload APK
         uses: softprops/action-gh-release@v2
