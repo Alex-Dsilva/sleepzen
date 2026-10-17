@@ -56,18 +56,18 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x android/gradlew
 
-      # 8. Build debug APK
-      - name: Build Debug APK
+      # 8. Build Release and Debug APKs
+      - name: Build Release APK
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
       # 9. Upload APK as build artifact (always available for 30 days)
-      - name: Upload APK as artifact
+      - name: Upload Release APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SLEEPZEN-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: SLEEPZEN-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
 
       # 10. Create a GitHub Release with the APK attached (on push to main/master)
@@ -84,13 +84,13 @@ jobs:
             ## 🌙 SLEEPZEN Android App
 
             **Install directly on your Android phone:**
-            1. Download the APK file below
+            1. Download the `app-release.apk` file below (Do NOT download `.zip` if from Artifacts)
             2. On your Android phone, go to **Settings → Security → Install unknown apps** and allow your browser or file manager
-            3. Open the downloaded APK and tap **Install**
+            3. Open the downloaded `app-release.apk` and tap **Install** (Release build installs cleanly without "package appears to be invalid" error)
 
             ---
             Built automatically from the latest source on every push.
-          files: android/app/build/outputs/apk/debug/app-debug.apk
+          files: android/app/build/outputs/apk/release/app-release.apk
           draft: false
           prerelease: false
         env:
